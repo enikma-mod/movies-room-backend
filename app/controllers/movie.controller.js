@@ -1,7 +1,7 @@
 const db = require("../models");
-const Tutorial = db.tutorials;
+const Movie = db.movies;
 
-// Create and Save a new Tutorial
+// Create and Save a new Movie
 exports.create = (req, res) => {
   // Validate request
   if (!req.body.title) {
@@ -9,62 +9,65 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a Tutorial
-  const tutorial = new Tutorial({
+  // Create a Movie
+  const movie = new Movie({
     title: req.body.title,
     description: req.body.description,
-    published: req.body.published ? req.body.published : false
+    genre: req.body.genre,
+    release_date: req.body.release_date,
+    duration: req.body.duration,
+    image_url: req.body.image_url
   });
 
-  // Save Tutorial in the database
-  tutorial
-    .save(tutorial)
+  // Save Movie in the database
+  movie
+    .save(movie)
     .then(data => {
       res.send(data);
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Tutorial."
+          err.message || "Some error occurred while creating the Movie."
       });
     });
 };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all Movies from the database.
 exports.findAll = (req, res) => {
     const title = req.query.title;
     var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
   
-    Tutorial.find(condition)
+    Movie.find(condition)
       .then(data => {
         res.send(data);
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving tutorials."
+            err.message || "Some error occurred while retrieving Movies."
         });
     });
 };
 
-// Find a single Tutorial with an id
+// Find a single Movie with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-  Tutorial.findById(id)
+  Movie.findById(id)
     .then(data => {
       if (!data)
-        res.status(404).send({ message: "Not found Tutorial with id " + id });
+        res.status(404).send({ message: "Not found Movie with id " + id });
       else res.send(data);
     })
     .catch(err => {
       res
         .status(500)
-        .send({ message: "Error retrieving Tutorial with id=" + id });
+        .send({ message: "Error retrieving Movie with id=" + id });
     });
 };
 
-// Update a Tutorial by the id in the request
+// Update a Movie by the id in the request
 exports.update = (req, res) => {
     if (!req.body) {
         return res.status(400).send({
@@ -74,70 +77,70 @@ exports.update = (req, res) => {
     
       const id = req.params.id;
     
-      Tutorial.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+      Movie.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
         .then(data => {
           if (!data) {
             res.status(404).send({
-              message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found!`
+              message: `Cannot update Movie with id=${id}. Maybe Movie was not found!`
             });
-          } else res.send({ message: "Tutorial was updated successfully." });
+          } else res.send({ message: "Movie was updated successfully." });
         })
         .catch(err => {
           res.status(500).send({
-            message: "Error updating Tutorial with id=" + id
+            message: "Error updating Movie with id=" + id
         });
     });
 };
 
-// Delete a Tutorial with the specified id in the request
+// Delete a Movie with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-  Tutorial.findByIdAndRemove(id)
+  Movie.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+          message: `Cannot delete Movie with id=${id}. Maybe Movie was not found!`
         });
       } else {
         res.send({
-          message: "Tutorial was deleted successfully!"
+          message: "Movie was deleted successfully!"
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete Tutorial with id=" + id
+        message: "Could not delete Movie with id=" + id
       });
     });
 };
 
-// Delete all Tutorials from the database.
+// Delete all Movies from the database.
 exports.deleteAll = (req, res) => {
-    Tutorial.deleteMany({})
+    Movie.deleteMany({})
     .then(data => {
       res.send({
-        message: `${data.deletedCount} Tutorials were deleted successfully!`
+        message: `${data.deletedCount} Movies were deleted successfully!`
       });
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while removing all tutorials."
+          err.message || "Some error occurred while removing all Movies."
       });
     });
 };
 
-// Find all published Tutorials
+// Find all published Movies
 exports.findAllPublished = (req, res) => {
-    Tutorial.find({ published: true })
+    Movie.find({ published: true })
     .then(data => {
       res.send(data);
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials."
+          err.message || "Some error occurred while retrieving Movies."
       });
     });
 };
